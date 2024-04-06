@@ -132,7 +132,27 @@ const type_of_number = sequelize.define('type_of_number', {
     id_type_of_number: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     room_type_name: { type: DataTypes.STRING }
 })
-
+const authentication = sequelize.define('authentication', {
+    id_auth: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    fk_client: { type: DataTypes.INTEGER },
+    token: { type: DataTypes.STRING, allowNull: true },
+    created_at: { type: DataTypes.DATE }
+})
+const device = sequelize.define('device', {
+    id_device: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true }
+})
+device.hasMany(authentication, {
+    foreignKey: 'type_device'
+})
+authentication.belongsTo(device, {
+    foreignKey: 'type_device'
+})
+client.hasMany(authentication, {
+    foreignKey: 'fk_client'
+})
+authentication.belongsTo(client, {
+    foreignKey: 'fk_client'
+})
 additional_service.hasMany(composition_of_application_additional_services, {
     foreignKey: 'fk_additional_service'
 })

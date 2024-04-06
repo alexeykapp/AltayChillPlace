@@ -3,6 +3,13 @@ const bcrypt = require('bcrypt')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 
+function generateToken(id, phone) {
+    const token = jwt.sign({ id, phone },
+        process.env.SECRET_KEY,
+        { expiresIn: '24h' }
+    )
+    return token
+}
 class UserController {
     async registration(req, res) {
         try {
