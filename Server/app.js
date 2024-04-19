@@ -4,7 +4,8 @@ const sequelize = require('./db')
 const model = require('./models/models')
 const PORT = process.env.PORT || 5000
 const router = require('./routes/index')
-const errorHandler = require('./middleware/ErrorHandlerMiddlevare')
+const cookieParser = require('cookie-parser')
+//const errorHandler = require('./middleware/ErrorHandlerMiddleware')
 
 const cors = require('cors')
 const app = express()
@@ -12,8 +13,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use('/api', router)
-
-app.use(errorHandler)
+app.use(cookieParser())
+//app.use(errorHandler)
 
 const start = async () => {
     try {

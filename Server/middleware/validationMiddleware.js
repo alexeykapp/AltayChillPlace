@@ -1,16 +1,5 @@
-const { check, body } = require('express-validator')
+const { check, body, validationResult } = require('express-validator')
 
-/*const registrationValidationRules = () => {
-    return [
-        check('full_name_client', 'Empty')
-        check('phone', "Empty phone number").notEmpty(),
-        check('password', "The password must be at least 6 characters long, contain at least one digit and a special character")
-            .isLength({ min: 6 })
-            .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/),
-        check('phone', "Invalid phone number").isMobilePhone('ru-RU'),
-        check('phone', "Incorrect phone number").isLength({ min: 11, max: 12 })
-    ]
-}*/
 const registrationValidationRules = () => {
     return [
         body('phone')

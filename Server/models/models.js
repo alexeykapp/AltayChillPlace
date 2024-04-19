@@ -273,6 +273,7 @@ house.belongsTo(type_of_number, {
 })
 
 module.exports = {
+    authentication,
     additional_service,
     application_payment_status,
     blog,

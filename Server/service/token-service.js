@@ -10,4 +10,20 @@ class TokenService {
             refreshToken
         }
     }
+    async saveToken(userId, refreshToken) {
+        try {
+            const tokenData = await authentication.findOne({ fk_client: userId })
+            if (tokenData) {
+                tokenData.token = refreshToken;
+                return tokenData.save();
+            }
+            const token = await authentication.create({ fk_client: userId, token: refreshToken })
+            return token;
+        }
+        catch (err) {
+            console.log("Token saving error")
+        }
+    }
 }
+
+module.exports = new TokenService();
