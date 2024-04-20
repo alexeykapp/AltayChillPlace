@@ -1,6 +1,5 @@
 const { client, authentication } = require('../models/models')
 const bcrypt = require('bcrypt')
-const { validationResult } = require('express-validator')
 const TokenService = require('../service/token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../error/api-error')
@@ -22,23 +21,41 @@ class UserService {
         //await TokenService.saveToken(userDto.id, tokens.refreshToken)
     }
     async login(email, password) {
-        const user = await client.findOne({ where: { mail_client: email } })
+        const user = await client.findOne({ where: { mail_client: email } });
         if (!user) {
-            throw ApiError.BadRequest('The user with this email was not found')
+            throw ApiError.BadRequest('The user with this email was not found');
         }
         const hashPassword = user.password_client;
-        const isPasswordEquals = await bcrypt.compare(password, hashPassword)
+        const isPasswordEquals = await bcrypt.compare(password, hashPassword);
         if (!isPasswordEquals) {
-            throw ApiError.BadRequest(`Invalid password`)
+            throw ApiError.BadRequest(`Invalid password`);
         }
-        const userDto = new UserDto(user)
-        const tokens = tokenService.generateTokens({ ...userDto })
-
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
-        return { ...tokens, user: userDto }
+        return await this.createUserDtoAndGenerateTokens(user);
     }
     async logout(refreshToken) {
-        const token = await tokenService.removeToken()
+        const token = await tokenService.removeToken(refreshToken);
+        return token;
+    }
+    async refresh(refreshToken) {
+        if (!refreshToken) {
+            throw ApiError.UnauthorizedError();
+        }
+        const validateToken = tokenService.validateRefreshToken(refreshToken);
+        const user = await tokenService.findClientToken(refreshToken);
+        if (!validateToken || !user) {
+            throw ApiError.UnauthorizedError();
+        }
+        return await this.createUserDtoAndGenerateTokens(user);
+    }
+    async createUserDtoAndGenerateTokens(user) {
+        const userDto = new UserDto(user);
+        const tokens = await tokenService.generateTokens({ ...userDto });
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+        return { ...tokens, user: userDto };
+    }
+    async getAllUsers() {
+        const users = await client.findAll()
+        return users;
     }
 }
 
