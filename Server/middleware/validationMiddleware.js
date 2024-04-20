@@ -11,14 +11,14 @@ const registrationValidationRules = () => {
             .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
             .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/)
             .withMessage("Password must be at least 6 characters long, contain at least one digit and a special character"),
-        body('full_name_client')
+        body('fullName')
             .notEmpty().withMessage("Empty full name")
             .matches(/^[А-Яа-яЁё]+[\s][А-Яа-яЁё]+[\s][А-Яа-яЁё]+$/)
             .withMessage("Incorrect full name"),
-        body('date_of_birth_client')
+        body('dateOfBirth')
             .notEmpty().withMessage("Empty date of birth")
             .isDate({ format: 'DD-MM-YYYY' }).withMessage('Invalid date format'),
-        body('mail_client')
+        body('email')
             .notEmpty().withMessage("Empty email")
             .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/).withMessage('Invalid email')
     ]

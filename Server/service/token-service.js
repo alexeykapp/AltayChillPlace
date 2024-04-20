@@ -12,7 +12,7 @@ class TokenService {
     }
     async saveToken(userId, refreshToken) {
         try {
-            const tokenData = await authentication.findOne({ fk_client: userId })
+            const tokenData = await authentication.findOne({ where: { fk_client: userId } })
             if (tokenData) {
                 tokenData.token = refreshToken;
                 return tokenData.save();
@@ -23,6 +23,10 @@ class TokenService {
         catch (err) {
             console.log("Token saving error")
         }
+    }
+    async removeToken(refreshToken) {
+        const tokenData = await authentication.deleteOne({ refreshToken })
+        return tokenData;
     }
 }
 
