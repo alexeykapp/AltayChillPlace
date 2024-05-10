@@ -9,11 +9,12 @@ const errorMiddleware = require('./middleware/error-middleware')
 const cors = require('cors')
 const app = express()
 
-app.use(cors())
-app.use(express.json())
-app.use(cookieParser())
-app.use('/api', router)
-app.use(errorMiddleware)
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use('/api', router);
+app.use(errorMiddleware);
 
 const start = async () => {
     try {

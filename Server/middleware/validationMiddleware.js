@@ -4,8 +4,8 @@ const registrationValidationRules = () => {
     return [
         body('phone')
             .notEmpty().withMessage("Empty phone number")
-            .isMobilePhone('ru-RU').withMessage("Invalid phone number")
-            .isLength({ min: 10, max: 12 }).withMessage("Incorrect phone number length"),
+            .matches(/^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/).withMessage("Invalid phone number")
+            .isLength({ min: 10, max: 18 }).withMessage("Incorrect phone number length"),
         body('password')
             .notEmpty().withMessage("Empty password")
             .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
@@ -17,7 +17,7 @@ const registrationValidationRules = () => {
             .withMessage("Incorrect full name"),
         body('dateOfBirth')
             .notEmpty().withMessage("Empty date of birth")
-            .isDate({ format: 'DD-MM-YYYY' }).withMessage('Invalid date format'),
+            .matches(/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/).withMessage('Invalid date format'),
         body('email')
             .notEmpty().withMessage("Empty email")
             .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/).withMessage('Invalid email')

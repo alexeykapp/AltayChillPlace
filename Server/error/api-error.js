@@ -7,6 +7,9 @@ module.exports = class ApiError extends Error {
         this.status = status;
         this.errors = errors;
     }
+    static ServerError() {
+        return new ApiError(500, 'Server error');
+    }
     static UnauthorizedError() {
         return new ApiError(401, 'The user is not logged in')
     }

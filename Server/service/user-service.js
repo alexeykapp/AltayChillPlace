@@ -1,5 +1,6 @@
 const { client, authentication } = require('../models/models')
 const bcrypt = require('bcrypt')
+const moment = require("moment");
 const TokenService = require('../service/token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../error/api-error')
@@ -7,23 +8,29 @@ const tokenService = require('../service/token-service')
 
 class UserService {
     async registration(phone, email, password, dateOfBirth, fullName, device) {
-        const candidate = await client.findOne({ where: { mail_client: email } })
-        if (candidate) {
-            throw ApiError.BadRequest(`Пользователь с таким email: ${email} уже существует`)
+        try {
+            const candidate = await client.findOne({ where: { mail_client: email } })
+            if (candidate) {
+                throw ApiError.BadRequest(`A user with this email already exists`)
+            }
+            const hashPassword = await bcrypt.hash(password, 7)
+            const date = moment(dateOfBirth, "DD-MM-YYYY").toDate();
+            const newClient = await client.create({ full_name_client: fullName, date_of_birth_client: date, phone_number_client: phone, mail_client: email, password_client: hashPassword })
+            const userDto = new UserDto(newClient)
+            const tokens = TokenService.generateTokens({ ...userDto })
+            const auth = await authentication.create({ fk_client: userDto.id, token: tokens.refreshToken, type_device: device })
+            console.log('New user: ' + email);
+            return { tokens }
         }
-        console.log(`'${password}'`);
-        const hashPassword = await bcrypt.hash(password, 7)
-        const newClient = await client.create({ full_name_client: fullName, date_of_birth_client: dateOfBirth, phone_number_client: phone, mail_client: email, password_client: hashPassword })
-        const userDto = new UserDto(newClient)
-        const tokens = TokenService.generateTokens({ ...userDto })
-        const auth = await authentication.create({ fk_client: userDto.id, token: tokens.refreshToken, type_device: device })
-        return { tokens, user: UserDto }
-        //await TokenService.saveToken(userDto.id, tokens.refreshToken)
+        catch (err) {
+            console.log('Error registration service:' + err);
+            throw ApiError.ServerError();
+        }
     }
-    async login(email, password) {
-        const user = await client.findOne({ where: { mail_client: email } });
+    async login(phone, password) {
+        const user = await client.findOne({ where: { phone_number_client: phone } });
         if (!user) {
-            throw ApiError.BadRequest('The user with this email was not found');
+            throw ApiError.BadRequest('The user with this phone was not found');
         }
         const hashPassword = user.password_client;
         const isPasswordEquals = await bcrypt.compare(password, hashPassword);

@@ -33,7 +33,7 @@ const client = sequelize.define('client', {
     id_client: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     full_name_client: { type: DataTypes.STRING(70) },
     date_of_birth_client: { type: DataTypes.DATEONLY },
-    phone_number_client: { type: DataTypes.STRING(11) },
+    phone_number_client: { type: DataTypes.STRING(17) },
     mail_client: { type: DataTypes.STRING },
     password_client: { type: DataTypes.STRING },
     photo_avatar: { type: DataTypes.BLOB }
