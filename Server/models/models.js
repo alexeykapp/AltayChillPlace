@@ -112,8 +112,8 @@ const reservation_application_status = sequelize.define('reservation_application
 const reservation_request = sequelize.define('reservation_request', {
     id_reservation_request: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     date_of_application: { type: DataTypes.DATE },
-    arrival_date: { type: DataTypes.DATE },
-    date_of_departure: { type: DataTypes.DATE },
+    arrival_date: { type: DataTypes.DATEONLY },
+    date_of_departure: { type: DataTypes.DATEONLY },
     number_of_persons: { type: DataTypes.INTEGER },
     fk_client: { type: DataTypes.INTEGER },
     fk_house: { type: DataTypes.INTEGER }
