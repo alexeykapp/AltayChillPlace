@@ -23,6 +23,16 @@ class HouseController {
             next(err);
         }
     }
+    async getHouseById(req, res, next) {
+        try {
+            const idHouse = parseInt(req.params.id);
+            const allInfoHouse = await houseService.getHouseById(idHouse);
+            res.json(allInfoHouse);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = new HouseController();

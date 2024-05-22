@@ -1,6 +1,7 @@
-const { house, reservation_request } = require('../models/models');
+const { house, reservation_request, photos_rooms } = require('../models/models');
 const { Op, Sequelize } = require('sequelize');
 class HouseService {
+
     async getAllHouse() {
         const houses = await house.findAll();
         return houses;
@@ -30,6 +31,23 @@ class HouseService {
             }
         });
         return availableHouses;
+    }
+
+    async getHouseById(idHouse) {
+        const houseFind = await house.findByPk(idHouse);
+        if (houseFind.length == 0) {
+            throw new Error('There is no house with this id in the database');
+        }
+        const photosHouse = await photos_rooms.findAll({
+            where: {
+                fk_house: idHouse
+            }
+        });
+        const allInfoHouse = {
+            houseFind,
+            photosHouse: photosHouse.length ? photosHouse : 'No images found'
+        };
+        return allInfoHouse;
     }
 }
 
