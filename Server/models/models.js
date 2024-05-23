@@ -31,7 +31,9 @@ const booking_request_status_name = sequelize.define('booking_request_status_nam
 
 const client = sequelize.define('client', {
     id_client: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    full_name_client: { type: DataTypes.STRING(70) },
+    first_name: { type: DataTypes.STRING(20) },
+    middle_name: { type: DataTypes.STRING(20) },
+    last_name: { type: DataTypes.STRING(20) },
     date_of_birth_client: { type: DataTypes.DATEONLY },
     phone_number_client: { type: DataTypes.STRING(17) },
     mail_client: { type: DataTypes.STRING },

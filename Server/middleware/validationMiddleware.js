@@ -11,10 +11,18 @@ const registrationValidationRules = () => {
             .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
             .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/)
             .withMessage("Password must be at least 6 characters long, contain at least one digit and a special character"),
-        body('fullName')
-            .notEmpty().withMessage("Empty full name")
-            .matches(/^[А-Яа-яЁё]+[\s][А-Яа-яЁё]+[\s][А-Яа-яЁё]+$/)
-            .withMessage("Incorrect full name"),
+        body('last_name')
+            .notEmpty().withMessage("Empty last name")
+            .matches(/^[а-яА-ЯёЁ]+$/)
+            .withMessage("Incorrect last name"),
+        body('middle_name')
+            .notEmpty().withMessage("Empty middle name")
+            .matches(/^[а-яА-ЯёЁ]+$/)
+            .withMessage("Incorrect last name"),
+        body('first_name')
+            .notEmpty().withMessage("Empty first name")
+            .matches(/^[а-яА-ЯёЁ]+$/)
+            .withMessage("Incorrect first name"),
         body('dateOfBirth')
             .notEmpty().withMessage("Empty date of birth")
             .matches(/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/).withMessage('Invalid date format'),

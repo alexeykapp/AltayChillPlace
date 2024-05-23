@@ -4,10 +4,11 @@ const moment = require("moment");
 const TokenService = require('../service/token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../error/api-error')
-const tokenService = require('../service/token-service')
+const tokenService = require('../service/token-service');
+const ProfileDto = require('../dtos/profileDto');
 
 class UserService {
-    async registration(phone, email, password, dateOfBirth, fullName, device) {
+    async registration(phone, email, password, dateOfBirth, last_name, middle_name, first_name, device) {
         try {
             const candidate = await client.findOne({ where: { mail_client: email } })
             if (candidate) {
@@ -15,7 +16,7 @@ class UserService {
             }
             const hashPassword = await bcrypt.hash(password, 7)
             const date = moment(dateOfBirth, "DD-MM-YYYY").toDate();
-            const newClient = await client.create({ full_name_client: fullName, date_of_birth_client: date, phone_number_client: phone, mail_client: email, password_client: hashPassword })
+            const newClient = await client.create({ last_name: last_name, middle_name: middle_name, first_name: first_name, date_of_birth_client: date, phone_number_client: phone, mail_client: email, password_client: hashPassword })
             const userDto = new UserDto(newClient)
             const tokens = TokenService.generateTokens({ ...userDto })
             const auth = await authentication.create({ fk_client: userDto.id, token: tokens.refreshToken, type_device: device })
@@ -55,7 +56,7 @@ class UserService {
         return await this.createUserDtoAndGenerateTokens(user);
     }
     async createUserDtoAndGenerateTokens(user) {
-        const userDto = new UserDto(user);
+        const userDto = new ProfileDto(user);
         const tokens = await tokenService.generateTokens({ ...userDto });
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
         return { ...tokens, user: userDto };
