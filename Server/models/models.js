@@ -38,7 +38,8 @@ const client = sequelize.define('client', {
     phone_number_client: { type: DataTypes.STRING(17) },
     mail_client: { type: DataTypes.STRING },
     password_client: { type: DataTypes.STRING },
-    photo_avatar: { type: DataTypes.BLOB }
+    photo_avatar: { type: DataTypes.BLOB },
+    isAdmin: { type: DataTypes.BOOLEAN }
 })
 
 const composition_of_application_additional_services = sequelize.define('composition_of_application_additional_services', {

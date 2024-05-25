@@ -56,10 +56,11 @@ class UserService {
         return await this.createUserDtoAndGenerateTokens(user);
     }
     async createUserDtoAndGenerateTokens(user) {
-        const userDto = new ProfileDto(user);
+        const userDto = new UserDto(user);
+        const profileDto = new ProfileDto(user);
         const tokens = await tokenService.generateTokens({ ...userDto });
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
-        return { ...tokens, user: userDto };
+        return { ...tokens, user: profileDto };
     }
     async getAllUsers() {
         const users = await client.findAll()

@@ -1,5 +1,5 @@
-const express = require('express'); // Импорт express
-const router = express.Router(); // Создание экземпляра Router
+const express = require('express');
+const router = express.Router();
 const userController = require('../controllers/userController');
 const bookingRouter = require('./bookingRouter');
 const { registrationValidationRules, validate } = require('../middleware/validationMiddleware');
