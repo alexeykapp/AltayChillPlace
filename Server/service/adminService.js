@@ -1,4 +1,4 @@
-
+const blogService = require('./blogService');
 
 class AdminService {
 

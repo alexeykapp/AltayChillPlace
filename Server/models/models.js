@@ -92,7 +92,7 @@ const payment_status_name = sequelize.define('payment_status_name', {
     name_payment_status: { type: DataTypes.STRING }
 })
 
-const photos_in_review = sequelize.define('id_photos_in_review', {
+const photos_in_review = sequelize.define('photos_in_review', {
     id_photos_in_review: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     photo_review: { type: DataTypes.BLOB },
     fk_review: { type: DataTypes.INTEGER }
@@ -128,7 +128,8 @@ const review_to_number = sequelize.define('review_to_number', {
     review_date: { type: DataTypes.DATE },
     review_time: { type: DataTypes.TIME },
     fk_client: { type: DataTypes.INTEGER },
-    fk_house: { type: DataTypes.INTEGER }
+    fk_house: { type: DataTypes.INTEGER },
+    star_rating: { type: DataTypes.INTEGER }
 });
 
 const type_of_number = sequelize.define('type_of_number', {
