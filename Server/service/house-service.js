@@ -1,5 +1,6 @@
 const { house, reservation_request, photos_rooms } = require('../models/models');
 const { Op, Sequelize } = require('sequelize');
+const sharp = require('sharp');
 class HouseService {
 
     async getAllHouse() {
@@ -48,6 +49,21 @@ class HouseService {
             photosHouse: photosHouse.length ? photosHouse : 'No images found'
         };
         return allInfoHouse;
+    }
+    async getPhotoHouseById(idHouse) {
+        const photosHouse = await house.findByPk(idHouse, {
+            attributes: ['photo_of_the_room'],
+        });
+        const photosRoom = await photos_rooms.findAll({
+            where: {
+                fk_house: idHouse,
+            },
+            attributes: ['photo_of_the_room'],
+        });
+        return {
+            photosHouse: photosHouse ? [photosHouse.photo_of_the_room] : [],
+            photosRoom: photosRoom.map(photo => photo.photo_of_the_room),
+        };
     }
 }
 

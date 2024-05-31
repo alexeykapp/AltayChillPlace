@@ -5,7 +5,8 @@ const additional_service = sequelize.define('additional_service', {
     id_additional_service: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name_of_additional_service: { type: DataTypes.STRING(50) },
     additional_service_price: { type: DataTypes.INTEGER },
-    description_of_additional_service: { type: DataTypes.STRING }
+    description_of_additional_service: { type: DataTypes.STRING },
+    fk_service_type: { type: DataTypes.INTEGER }
 })
 
 const blog = sequelize.define('blog', {
@@ -131,7 +132,10 @@ const review_to_number = sequelize.define('review_to_number', {
     fk_house: { type: DataTypes.INTEGER },
     star_rating: { type: DataTypes.INTEGER }
 });
-
+const service_type = sequelize.define('service_type', {
+    id_service_type: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name_of_service_type: { type: DataTypes.STRING(50), allowNull: false }
+});
 const type_of_number = sequelize.define('type_of_number', {
     id_type_of_number: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     room_type_name: { type: DataTypes.STRING }
@@ -170,6 +174,13 @@ booking_request_status_name.hasMany(reservation_application_status, {
 reservation_application_status.belongsTo(booking_request_status_name, {
     foreignKey: 'fk_application_status'
 })
+service_type.hasMany(additional_service, {
+    foreignKey: 'fk_service_type'
+});
+additional_service.belongsTo(service_type, {
+    foreignKey: 'fk_service_type'
+});
+
 
 client.hasMany(reservation_request, {
     foreignKey: 'fk_client'
@@ -295,5 +306,6 @@ module.exports = {
     reservation_application_status,
     reservation_request,
     review_to_number,
-    type_of_number
+    type_of_number,
+    service_type
 }

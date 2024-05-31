@@ -11,6 +11,15 @@ class ServicesController {
             next(err);
         }
     }
+    async getTypesService(req, res, next) {
+        try {
+            const listType = await servicesService.getTypeService();
+            res.json(listType);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = new ServicesController();

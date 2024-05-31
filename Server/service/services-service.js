@@ -1,5 +1,5 @@
 const ApiError = require('../error/api-error');
-const { additional_service, composition_of_application_additional_services, } = require('../models/models');
+const { additional_service, composition_of_application_additional_services, service_type } = require('../models/models');
 
 class ServicesService {
     async getAllServices() {
@@ -16,6 +16,10 @@ class ServicesService {
             }));
         }
         return serviceBookingList;
+    }
+    async getTypeService() {
+        const types = await service_type.findAll();
+        return types;
     }
 }
 async function checkExistServices(servicesBooking) {
