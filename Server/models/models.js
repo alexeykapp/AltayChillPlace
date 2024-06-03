@@ -6,7 +6,9 @@ const additional_service = sequelize.define('additional_service', {
     name_of_additional_service: { type: DataTypes.STRING(50) },
     additional_service_price: { type: DataTypes.INTEGER },
     description_of_additional_service: { type: DataTypes.STRING },
-    fk_service_type: { type: DataTypes.INTEGER }
+    fk_service_type: { type: DataTypes.INTEGER },
+    additional_characteristic1: { type: DataTypes.STRING },
+    additional_characteristic2: { type: DataTypes.STRING }
 })
 
 const blog = sequelize.define('blog', {
@@ -40,7 +42,7 @@ const client = sequelize.define('client', {
     mail_client: { type: DataTypes.STRING },
     password_client: { type: DataTypes.STRING },
     photo_avatar: { type: DataTypes.BLOB },
-    isAdmin: { type: DataTypes.BOOLEAN }
+    isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
 })
 
 const composition_of_application_additional_services = sequelize.define('composition_of_application_additional_services', {
@@ -67,7 +69,9 @@ const house = sequelize.define('house', {
     room_size: { type: DataTypes.INTEGER },
     room_description: { type: DataTypes.TEXT },
     photo_of_the_room: { type: DataTypes.BLOB },
-    fk_type_of_number: { type: DataTypes.INTEGER }
+    fk_type_of_number: { type: DataTypes.INTEGER },
+    additional_characteristic1: { type: DataTypes.STRING },
+    additional_characteristic2: { type: DataTypes.STRING }
 })
 
 const house_item = sequelize.define('house_item', {
@@ -161,19 +165,12 @@ client.hasMany(authentication, {
 authentication.belongsTo(client, {
     foreignKey: 'fk_client'
 })
-additional_service.hasMany(composition_of_application_additional_services, {
-    foreignKey: 'fk_additional_service'
-})
-composition_of_application_additional_services.belongsTo(additional_service, {
-    foreignKey: 'fk_additional_service'
-})
+composition_of_application_additional_services.belongsTo(additional_service, { foreignKey: 'fk_additional_service' });
+additional_service.hasMany(composition_of_application_additional_services, { foreignKey: 'fk_additional_service' });
 
-booking_request_status_name.hasMany(reservation_application_status, {
-    foreignKey: 'fk_application_status'
-})
-reservation_application_status.belongsTo(booking_request_status_name, {
-    foreignKey: 'fk_application_status'
-})
+reservation_application_status.belongsTo(booking_request_status_name, { foreignKey: 'fk_application_status' });
+booking_request_status_name.hasMany(reservation_application_status, { foreignKey: 'fk_application_status' });
+
 service_type.hasMany(additional_service, {
     foreignKey: 'fk_service_type'
 });
@@ -184,17 +181,17 @@ additional_service.belongsTo(service_type, {
 
 client.hasMany(reservation_request, {
     foreignKey: 'fk_client'
-})
+});
 reservation_request.belongsTo(client, {
     foreignKey: 'fk_client'
-})
+});
 
 client.hasMany(review_to_number, {
     foreignKey: 'fk_client'
-})
+});
 review_to_number.belongsTo(client, {
     foreignKey: 'fk_client'
-})
+});
 
 house.hasMany(equipment_numbers, {
     foreignKey: 'fk_house'
@@ -210,12 +207,8 @@ photos_rooms.belongsTo(house, {
     foreignKey: 'fk_house'
 })
 
-house.hasMany(reservation_request, {
-    foreignKey: 'fk_house'
-})
-reservation_request.belongsTo(house, {
-    foreignKey: 'fk_house'
-})
+reservation_request.belongsTo(house, { foreignKey: 'fk_house' });
+house.hasMany(reservation_request, { foreignKey: 'fk_house' });
 
 house.hasMany(review_to_number, {
     foreignKey: 'fk_house'
@@ -245,19 +238,11 @@ application_payment_status.belongsTo(payment_status_name, {
     foreignKey: 'fk_payment_state'
 })
 
-reservation_request.hasMany(reservation_application_status, {
-    foreignKey: 'fk_reservation_request'
-})
-reservation_application_status.belongsTo(reservation_request, {
-    foreignKey: 'fk_reservation_request'
-})
+reservation_application_status.belongsTo(reservation_request, { foreignKey: 'fk_reservation_request' });
+reservation_request.hasMany(reservation_application_status, { foreignKey: 'fk_reservation_request' });
 
-reservation_request.hasMany(composition_of_application_additional_services, {
-    foreignKey: 'fk_reservation_request'
-})
-composition_of_application_additional_services.belongsTo(reservation_request, {
-    foreignKey: 'fk_reservation_request'
-})
+composition_of_application_additional_services.belongsTo(reservation_request, { foreignKey: 'fk_reservation_request' });
+reservation_request.hasMany(composition_of_application_additional_services, { foreignKey: 'fk_reservation_request' });
 
 reservation_request.hasMany(mark_reservation, {
     foreignKey: 'fk_reservation_request'

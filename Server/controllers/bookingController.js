@@ -2,6 +2,7 @@ const bookingService = require('../service/booking-service');
 const serviceServices = require('../service/services-service');
 const ApiError = require('../error/api-error');
 
+
 class BookingController {
     async createBookingRequest(req, res, next) {
         try {
@@ -18,6 +19,16 @@ class BookingController {
     }
     async cancelBookingRequest(req, res, next) {
 
+    }
+    async getHistoryBooking(req, res, next) {
+        try {
+            const idClient = parseInt(req.params.id);
+            const history = await bookingService.getHistoryBooking(idClient);
+            return res.json(history);
+        }
+        catch (err) {
+            next(err);
+        }
     }
 }
 

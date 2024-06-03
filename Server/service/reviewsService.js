@@ -1,5 +1,6 @@
 const { review_to_number, client, photos_in_review } = require('../models/models')
 const ReviewsDto = require('../dtos/reviewsDto');
+const ApiError = require('../error/api-error')
 
 class ReviewsService {
     async getAllReviews() {
@@ -21,6 +22,15 @@ class ReviewsService {
         });
         console.log(photos);
         return photos;
+    }
+    async createNewReviews(review_text, id_client, id_house, star_rating) {
+        const newReviews = await review_to_number.create({
+            review_text: review_text,
+            fk_client: id_client,
+            fk_house: id_house,
+            star_rating: star_rating
+        });
+        return newReviews;
     }
 }
 

@@ -49,10 +49,9 @@ class HouseController {
                     .jpeg({ quality: 70 })
                     .toBuffer()
             ));
-
             res.json({
-                photosHouse: compressedPhotosHouse.map(photo => photo.toString('base64')),
-                photosRoom: compressedPhotosRoom.map(photo => photo.toString('base64'))
+                photosHouse: compressedPhotosHouse,
+                photosRoom: compressedPhotosRoom
             });
         }
         catch (err) {
