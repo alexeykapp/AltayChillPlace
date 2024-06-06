@@ -1,6 +1,7 @@
 const { getAllHouses } = require("../service/booking-service");
 const houseService = require('../service/house-service');
 const sharp = require('sharp');
+const HouseDto = require('../dtos/HouseDto');
 
 class HouseController {
     async getAllHouses(req, res, next) {
@@ -56,6 +57,19 @@ class HouseController {
         }
         catch (err) {
             next(err);
+        }
+    }
+    async createHouse(req, res, next) {
+        try {
+            const { houseData, photos } = req.body;
+
+            const createdHouse = await houseService.createHouseWithPhotos(houseData, photos);
+
+            const houseDto = new HouseDto(createdHouse);
+
+            res.status(201).json(houseDto);
+        } catch (err) {
+            next(err)
         }
     }
 }

@@ -1,26 +1,26 @@
 const bookingHouseService = require('./house-service');
-//const { reservation_request, reservation_application_status, booking_request_status_name, house, composition_of_application_additional_services, additional_service } = require('../models/models')
 const existService = require('../helpers/checkExists');
 const ApiError = require('../error/api-error');
-const { where } = require('sequelize');
 const moment = require('moment');
 const sequelize = require('../db');
 const { reservation_request, house, reservation_application_status, composition_of_application_additional_services, additional_service, booking_request_status_name } = require('../models/models');
+
 class BookingService {
-    async createRequest(requestBooking) {
-        const resultCheck = await existService.existHouseAndClient()
+    async createRequest(id_client, id_house, numberOfPeople, arrivalDate, departureDate) {
+        const resultCheck = await existService.existHouseAndClient(id_house, id_client);
         if (resultCheck == false) {
             throw ApiError.BadRequest("Check the transmitted IDs");
         }
         const bookingRequest = await reservation_request.create({
-            arrival_date: requestBooking.arrivalDate,
-            date_of_departure: requestBooking.departureDate,
-            number_of_persons: requestBooking.numberOfPeople,
-            fk_client: requestBooking.id_client,
-            fk_house: requestBooking.id_house
+            arrival_date: arrivalDate,
+            date_of_departure: departureDate,
+            number_of_persons: numberOfPeople,
+            fk_client: id_client,
+            fk_house: id_house
         });
         return bookingRequest;
     }
+
     async getHistoryBooking(idClient) {
         const history = await getReservationHistoryByUserId(idClient);
         return history;
@@ -67,6 +67,7 @@ function formatReservationRecord(record) {
     const latestStatusName = getLatestStatus(record.statuses);
 
     return {
+        houseName: record.house_name || 'Неизвестный дом',
         arrivalDate: record.arrival_date,
         departureDate: record.date_of_departure,
         numberOfPersons: record.number_of_persons,
@@ -79,6 +80,7 @@ function formatReservationRecord(record) {
     };
 }
 
+// Основная функция для обращения к БД и обработки данных
 async function getReservationHistoryByUserId(userId) {
     const query = `
         SELECT 
@@ -87,6 +89,7 @@ async function getReservationHistoryByUserId(userId) {
             rr.date_of_departure,
             rr.number_of_persons,
             h.price_per_day,
+            h.house_name,  -- Добавляем название дома
             ras.application_update_date,
             ras.application_update_time,
             brsn.name_booking_request_status_name,
@@ -113,6 +116,7 @@ async function getReservationHistoryByUserId(userId) {
 
         console.log('Данные бронирований:', reservations);
 
+        // Группировка данных по reservation_request
         const groupedReservations = reservations.reduce((acc, curr) => {
             const { id_reservation_request, application_update_date, application_update_time, name_booking_request_status_name, ...rest } = curr;
 

@@ -6,9 +6,13 @@ const ApiError = require('../error/api-error');
 class BookingController {
     async createBookingRequest(req, res, next) {
         try {
-            const requestBooking = req.body.booking;
+            const { id_client, id_house, numberOfPeople, arrivalDate, departureDate } = req.body.booking;
+            console.log(req.body);
+            const booking = await bookingService.createRequest(id_client, id_house, numberOfPeople, arrivalDate, departureDate);
             const services = req.body.services;
-            const booking = await bookingService.createRequest(requestBooking);
+            if (!services) {
+                return res.json(booking);
+            }
             const bookingServices = await serviceServices.createServicesBooking(services, booking.id_reservation_request);
             return res.json({ booking, bookingServices });
         }

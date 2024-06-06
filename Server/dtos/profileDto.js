@@ -6,6 +6,7 @@ module.exports = class ProfileDto {
     email;
     phone;
     dateOfBerth;
+    isAdmin;
     constructor(user) {
         console.log(user);
         this.id = user.id_client;
@@ -15,5 +16,6 @@ module.exports = class ProfileDto {
         this.email = user.mail_client;
         this.phone = user.phone_number_client;
         this.dateOfBerth = user.date_of_birth_client;
+        this.isAdmin = user.isAdmin;
     }
 }

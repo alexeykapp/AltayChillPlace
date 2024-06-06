@@ -1,6 +1,8 @@
 const { house, reservation_request, photos_rooms } = require('../models/models');
 const { Op, Sequelize } = require('sequelize');
 const sharp = require('sharp');
+const HouseDto = require('../dtos/HouseDto');
+const sequelize = require('../db');
 class HouseService {
 
     async getAllHouse() {
@@ -23,11 +25,10 @@ class HouseService {
         });
         const bookedHouseIds = overlappingReservations.map(reservation => reservation.fk_house);
 
-        // Найдем все домики, которые не включены в список забронированных
         const availableHouses = await house.findAll({
             where: {
                 id_house: {
-                    [Op.notIn]: bookedHouseIds // Вот тут мы и исключаем все занятые домики
+                    [Op.notIn]: bookedHouseIds
                 }
             }
         });
@@ -64,6 +65,35 @@ class HouseService {
             photosHouse: photosHouse ? [photosHouse.photo_of_the_room] : [],
             photosRoom: photosRoom.map(photo => photo.photo_of_the_room),
         };
+    }
+    async createHouseWithPhotos(houseData, photos) {
+        const transaction = await sequelize.transaction();
+
+        try {
+            // Сохранение данных домика
+            const createdHouse = await house.create(houseData, { transaction });
+
+            // Извлечение основного фото домика
+            const mainPhoto = photos.shift();
+
+            // Обновление модели домика с основным фото
+            createdHouse.photo_of_the_room = Buffer.from(mainPhoto);
+            await createdHouse.save({ transaction });
+
+            // Сохранение дополнительных фото в таблицу photos_rooms
+            for (const photo of photos) {
+                await photos_rooms.create({
+                    photo_of_the_room: Buffer.from(photo),
+                    fk_house: createdHouse.id_house,
+                }, { transaction });
+            }
+
+            await transaction.commit();
+            return createdHouse;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     }
 }
 

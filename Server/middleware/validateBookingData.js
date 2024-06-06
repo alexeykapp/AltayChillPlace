@@ -4,17 +4,25 @@ const ApiError = require('../error/api-error');
 const validateBookingData = [
     body('booking.id_client').notEmpty().withMessage('Client ID is required'),
     body('booking.id_house').notEmpty().withMessage('House ID is required'),
-    body('booking.numberOfPeople').notEmpty().isNumeric().withMessage('Number of people is required and must be a number'),
-    body('booking.arrivalDate').notEmpty().isISO8601().withMessage('Arrival Date is required and must be a valid date in the format YYYY-MM-DD'),
-    body('booking.departureDate').notEmpty().isISO8601().withMessage('Departure Date is required and must be a valid date'),
-    body('services').notEmpty().isArray().withMessage('Services must be an array and should not be empty')
+    body('booking.numberOfPeople')
+        .notEmpty().withMessage('Number of people is required')
+        .isNumeric().withMessage('Number of people must be a number'),
+    body('booking.arrivalDate')
+        .notEmpty().withMessage('Arrival Date is required')
+        .isISO8601().withMessage('Arrival Date must be a valid date in the format YYYY-MM-DD'),
+    body('booking.departureDate')
+        .notEmpty().withMessage('Departure Date is required')
+        .isISO8601().withMessage('Departure Date must be a valid date'),
+    body('services')
+        .optional()
+        .isArray().withMessage('If provided, services must be an array')
         .custom((services) => {
-            return services.every(Number.isInteger);
+            return Array.isArray(services) && services.every(Number.isInteger);
         }).withMessage('Services array should contain only numbers'),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return next(new ApiError.BadRequest('ValidationError', errors.array()));
+            return next(ApiError.ValidationError('Validation error', errors.array()));
         }
         next();
     }

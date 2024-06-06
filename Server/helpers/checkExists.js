@@ -2,7 +2,7 @@ const { client, additional_service, house } = require('../models/models')
 
 class CheckExist {
     async existClient(idClient) {
-        const clientFind = await additional_service.findByPk(idClient);
+        const clientFind = await client.findByPk(idClient);
         if (!clientFind) {
             return false;
         }
@@ -23,8 +23,10 @@ class CheckExist {
         return true;
     }
     async existHouseAndClient(idHouse, idClient) {
+        console.log('ID house -' + idHouse + 'ID client - ' + idClient)
         const resultHouse = await this.existHouse(idHouse);
         const resultService = await this.existClient(idClient);
+        console.log('ID house -' + resultHouse + 'ID client - ' + resultService)
         if (resultHouse == false || resultService == false) {
             return false;
         }
