@@ -9,15 +9,15 @@ const additional_service = sequelize.define('additional_service', {
     fk_service_type: { type: DataTypes.INTEGER },
     additional_characteristic1: { type: DataTypes.STRING },
     additional_characteristic2: { type: DataTypes.STRING }
-})
+});
 
 const blog = sequelize.define('blog', {
-    id_blog: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: true },
+    id_blog: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
     publication_title: { type: DataTypes.STRING(70) },
     publication_date: { type: DataTypes.DATE },
     publication_text: { type: DataTypes.TEXT },
     image_blog: { type: DataTypes.BLOB }
-})
+});
 
 const application_payment_status = sequelize.define('application_payment_status', {
     id_application_payment_status: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -25,12 +25,12 @@ const application_payment_status = sequelize.define('application_payment_status'
     payment_time: { type: DataTypes.TIME },
     fk_payment_state: { type: DataTypes.INTEGER },
     fk_reservation_request: { type: DataTypes.INTEGER }
-})
+});
 
 const booking_request_status_name = sequelize.define('booking_request_status_name', {
     id_booking_request_status_name: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     name_booking_request_status_name: { type: DataTypes.STRING(30) }
-})
+});
 
 const client = sequelize.define('client', {
     id_client: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -43,7 +43,7 @@ const client = sequelize.define('client', {
     password_client: { type: DataTypes.STRING },
     photo_avatar: { type: DataTypes.BLOB },
     isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
-})
+});
 
 const composition_of_application_additional_services = sequelize.define('composition_of_application_additional_services', {
     id_composition_of_application_additional_services: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -52,13 +52,13 @@ const composition_of_application_additional_services = sequelize.define('composi
 }, {
     timestamps: false,
     createdAt: false
-})
+});
 
 const equipment_numbers = sequelize.define('equipment_numbers', {
     id_equipment_numbers: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     fk_house: { type: DataTypes.INTEGER },
     fk_items: { type: DataTypes.INTEGER }
-})
+});
 
 const house = sequelize.define('house', {
     id_house: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -71,51 +71,67 @@ const house = sequelize.define('house', {
     photo_of_the_room: { type: DataTypes.BLOB },
     fk_type_of_number: { type: DataTypes.INTEGER },
     additional_characteristic1: { type: DataTypes.STRING },
-    additional_characteristic2: { type: DataTypes.STRING }
-})
+    additional_characteristic2: { type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    deletedAt: { type: DataTypes.DATE, allowNull: true }
+}, {
+    timestamps: true,
+    paranoid: true
+});
 
 const house_item = sequelize.define('house_item', {
     id_house_item: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     item_name: { type: DataTypes.STRING(30) },
     item_characteristics: { type: DataTypes.STRING(70) },
     fk_type_items: { type: DataTypes.INTEGER }
-})
+});
 
 const item_type = sequelize.define('item_type', {
     id_item_type: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name_type: { type: DataTypes.STRING(50) }
-})
+});
 
 const mark_reservation = sequelize.define('mark_reservation', {
     id_mark_reservation: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     fk_reservation_request: { type: DataTypes.INTEGER },
     description_of_the_mark: { type: DataTypes.TEXT }
-})
+});
 
 const payment_status_name = sequelize.define('payment_status_name', {
     id_payment_status_name: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name_payment_status: { type: DataTypes.STRING }
-})
+});
 
 const photos_in_review = sequelize.define('photos_in_review', {
     id_photos_in_review: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     photo_review: { type: DataTypes.BLOB },
     fk_review: { type: DataTypes.INTEGER }
-})
+});
 
 const photos_rooms = sequelize.define('photos_rooms', {
     id_photos_rooms: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     photo_of_the_room: { type: DataTypes.BLOB },
     fk_house: { type: DataTypes.INTEGER }
-})
+});
 
 const reservation_application_status = sequelize.define('reservation_application_status', {
     id_reservation_application_status: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     application_update_date: { type: DataTypes.DATE },
     application_update_time: { type: DataTypes.TIME },
-    fk_application_status: { type: DataTypes.INTEGER },
-    fk_reservation_request: { type: DataTypes.INTEGER }
-})
+    fk_application_status: {
+        type: DataTypes.INTEGER, references: {
+            model: 'booking_request_status_name',
+            key: 'id_booking_request_status_name' // Исправлено поле key
+        }
+    },
+    fk_reservation_request: {
+        type: DataTypes.INTEGER, references: {
+            model: 'reservation_request',
+            key: 'id_reservation_request' // Исправлено поле key
+        }
+    }
+});
 
 const reservation_request = sequelize.define('reservation_request', {
     id_reservation_request: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -125,7 +141,7 @@ const reservation_request = sequelize.define('reservation_request', {
     number_of_persons: { type: DataTypes.INTEGER },
     fk_client: { type: DataTypes.INTEGER },
     fk_house: { type: DataTypes.INTEGER }
-})
+});
 
 const review_to_number = sequelize.define('review_to_number', {
     id_review_to_number: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -136,40 +152,47 @@ const review_to_number = sequelize.define('review_to_number', {
     fk_house: { type: DataTypes.INTEGER },
     star_rating: { type: DataTypes.INTEGER }
 });
+
 const service_type = sequelize.define('service_type', {
     id_service_type: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name_of_service_type: { type: DataTypes.STRING(50), allowNull: false }
 });
+
 const type_of_number = sequelize.define('type_of_number', {
     id_type_of_number: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     room_type_name: { type: DataTypes.STRING }
-})
+});
+
 const authentication = sequelize.define('authentication', {
     id_auth: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     fk_client: { type: DataTypes.INTEGER },
     token: { type: DataTypes.STRING, allowNull: true },
     created_at: { type: DataTypes.DATE }
-})
+});
+
 const device = sequelize.define('device', {
     id_device: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true }
-})
+});
+
 device.hasMany(authentication, {
     foreignKey: 'type_device'
-})
+});
 authentication.belongsTo(device, {
     foreignKey: 'type_device'
-})
+});
+
 client.hasMany(authentication, {
     foreignKey: 'fk_client'
-})
+});
 authentication.belongsTo(client, {
     foreignKey: 'fk_client'
-})
+});
+
 composition_of_application_additional_services.belongsTo(additional_service, { foreignKey: 'fk_additional_service' });
 additional_service.hasMany(composition_of_application_additional_services, { foreignKey: 'fk_additional_service' });
 
-reservation_application_status.belongsTo(booking_request_status_name, { foreignKey: 'fk_application_status' });
 booking_request_status_name.hasMany(reservation_application_status, { foreignKey: 'fk_application_status' });
+reservation_application_status.belongsTo(booking_request_status_name, { foreignKey: 'fk_application_status' });
 
 service_type.hasMany(additional_service, {
     foreignKey: 'fk_service_type'
@@ -177,7 +200,6 @@ service_type.hasMany(additional_service, {
 additional_service.belongsTo(service_type, {
     foreignKey: 'fk_service_type'
 });
-
 
 client.hasMany(reservation_request, {
     foreignKey: 'fk_client'
@@ -195,48 +217,48 @@ review_to_number.belongsTo(client, {
 
 house.hasMany(equipment_numbers, {
     foreignKey: 'fk_house'
-})
+});
 equipment_numbers.belongsTo(house, {
     foreignKey: 'fk_house'
-})
+});
 
 house.hasMany(photos_rooms, {
     foreignKey: 'fk_house'
-})
+});
 photos_rooms.belongsTo(house, {
     foreignKey: 'fk_house'
-})
+});
 
 reservation_request.belongsTo(house, { foreignKey: 'fk_house' });
 house.hasMany(reservation_request, { foreignKey: 'fk_house' });
 
 house.hasMany(review_to_number, {
     foreignKey: 'fk_house'
-})
+});
 review_to_number.belongsTo(house, {
     foreignKey: 'fk_house'
-})
+});
 
 house_item.hasMany(equipment_numbers, {
     foreignKey: 'fk_items'
-})
+});
 equipment_numbers.belongsTo(house_item, {
     foreignKey: 'fk_items'
-})
+});
 
 item_type.hasMany(house_item, {
     foreignKey: 'fk_type_items'
-})
+});
 house_item.belongsTo(item_type, {
     foreignKey: 'fk_type_items'
-})
+});
 
 payment_status_name.hasMany(application_payment_status, {
     foreignKey: 'fk_payment_state'
-})
+});
 application_payment_status.belongsTo(payment_status_name, {
     foreignKey: 'fk_payment_state'
-})
+});
 
 reservation_application_status.belongsTo(reservation_request, { foreignKey: 'fk_reservation_request' });
 reservation_request.hasMany(reservation_application_status, { foreignKey: 'fk_reservation_request' });
@@ -246,31 +268,31 @@ reservation_request.hasMany(composition_of_application_additional_services, { fo
 
 reservation_request.hasMany(mark_reservation, {
     foreignKey: 'fk_reservation_request'
-})
+});
 mark_reservation.belongsTo(reservation_request, {
     foreignKey: 'fk_reservation_request'
-})
+});
 
 reservation_request.hasMany(application_payment_status, {
     foreignKey: 'fk_reservation_request'
-})
+});
 application_payment_status.belongsTo(reservation_request, {
     foreignKey: 'fk_reservation_request'
-})
+});
 
 review_to_number.hasMany(photos_in_review, {
     foreignKey: "fk_review"
-})
+});
 photos_in_review.belongsTo(review_to_number, {
     foreignKey: 'fk_review'
-})
+});
 
 type_of_number.hasMany(house, {
     foreignKey: 'fk_type_of_number'
-})
+});
 house.belongsTo(type_of_number, {
     foreignKey: 'fk_type_of_number'
-})
+});
 
 module.exports = {
     authentication,
@@ -293,4 +315,4 @@ module.exports = {
     review_to_number,
     type_of_number,
     service_type
-}
+};

@@ -6,12 +6,14 @@ class BlogService {
         return posts;
     }
     async createNewPost(title, description, date, photo) {
+        const photoBuffer = Buffer.from(photo, 'base64');
         const newPost = await blog.create({
             publication_title: title,
             publication_date: date,
             publication_text: description,
-            image_blog: photo
+            image_blog: photoBuffer
         });
+        console.log(photoBuffer);
         return newPost;
     }
 }

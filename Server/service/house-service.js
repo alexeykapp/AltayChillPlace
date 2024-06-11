@@ -70,17 +70,11 @@ class HouseService {
         const transaction = await sequelize.transaction();
 
         try {
-            // Сохранение данных домика
             const createdHouse = await house.create(houseData, { transaction });
-
-            // Извлечение основного фото домика
             const mainPhoto = photos.shift();
-
-            // Обновление модели домика с основным фото
             createdHouse.photo_of_the_room = Buffer.from(mainPhoto);
             await createdHouse.save({ transaction });
 
-            // Сохранение дополнительных фото в таблицу photos_rooms
             for (const photo of photos) {
                 await photos_rooms.create({
                     photo_of_the_room: Buffer.from(photo),
@@ -94,6 +88,50 @@ class HouseService {
             await transaction.rollback();
             throw error;
         }
+    }
+    async updateHouse(idHouse, houseData) {
+        const houseToUpdate = await house.findByPk(idHouse);
+        if (!houseToUpdate) {
+            throw new Error('The house with this ID was not found');
+        }
+
+        await houseToUpdate.update(houseData);
+
+        return houseToUpdate;
+    }
+    async deleteHouse(idHouse) {
+        const houseToDelete = await house.findByPk(idHouse);
+        if (!houseToDelete) {
+            throw new Error('The house with this ID was not found');
+        }
+        await houseToDelete.destroy();
+    }
+    async addHousePhotos(idHouse, photos) {
+        const houseExists = await house.findByPk(idHouse);
+        if (!houseExists) {
+            throw new Error('The house with this ID was not found');
+        }
+
+        const addedPhotos = [];
+
+        for (const photo of photos) {
+            const newPhoto = await photos_rooms.create({
+                photo_of_the_room: Buffer.from(photo),
+                fk_house: idHouse,
+            });
+            addedPhotos.push(newPhoto);
+        }
+
+        return addedPhotos;
+    }
+
+    async deleteHousePhoto(idPhoto) {
+        const photoToDelete = await photos_rooms.findByPk(idPhoto);
+        if (!photoToDelete) {
+            throw new Error('No photo with this ID was found');
+        }
+
+        await photoToDelete.destroy();
     }
 }
 

@@ -10,9 +10,9 @@ const ProfileDto = require('../dtos/profileDto');
 class UserService {
     async registration(phone, email, password, dateOfBirth, last_name, middle_name, first_name, device) {
         try {
-            const candidate = await client.findOne({ where: { mail_client: email } })
+            const candidate = await client.findOne({ where: { phone_number_client: phone } })
             if (candidate) {
-                throw ApiError.BadRequest(`A user with this email already exists`)
+                throw ApiError.BadRequest(`A user with such a phone exists`)
             }
             const hashPassword = await bcrypt.hash(password, 7)
             const date = moment(dateOfBirth, "DD-MM-YYYY").toDate();
@@ -21,7 +21,10 @@ class UserService {
             const tokens = TokenService.generateTokens({ ...userDto })
             const auth = await authentication.create({ fk_client: userDto.id, token: tokens.refreshToken, type_device: device })
             console.log('New user: ' + email);
-            return { tokens }
+            return {
+                ...tokens,
+                user: userDto
+            }
         }
         catch (err) {
             console.log('Error registration service:' + err);

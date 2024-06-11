@@ -72,6 +72,54 @@ class HouseController {
             next(err)
         }
     }
+    async updateHouse(req, res, next) {
+        try {
+            const idHouse = parseInt(req.params.id);
+            const houseData = req.body;
+
+            const updatedHouse = await houseService.updateHouse(idHouse, houseData);
+
+            res.json(updatedHouse);
+        } catch (err) {
+            next(err);
+        }
+    }
+    async deleteHouse(req, res, next) {
+        try {
+            const idHouse = parseInt(req.params.id);
+
+            await houseService.deleteHouse(idHouse);
+
+            res.status(204).send();
+        } catch (err) {
+            next(err);
+        }
+    }
+    async addHousePhoto(req, res, next) {
+        try {
+            const idHouse = parseInt(req.params.id);
+            const { photo } = req.body;
+
+            const newPhoto = await houseService.addHousePhotos(idHouse, photo);
+
+            res.status(201).json(newPhoto);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async deleteHousePhoto(req, res, next) {
+        try {
+            const idPhoto = parseInt(req.params.id);
+
+            await houseService.deleteHousePhoto(idPhoto);
+
+            res.status(204).send();
+        } catch (err) {
+            next(err);
+        }
+    }
+
 }
 
 module.exports = new HouseController();
