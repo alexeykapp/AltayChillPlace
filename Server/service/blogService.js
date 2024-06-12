@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const { blog } = require('../models/models');
 
 class BlogService {
@@ -15,6 +16,14 @@ class BlogService {
         });
         console.log(photoBuffer);
         return newPost;
+    }
+    async deletePost(idPost) {
+        const post = await blog.destroy({
+            where: {
+                id_blog: idPost
+            }
+        })
+        return post;
     }
 }
 

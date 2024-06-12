@@ -64,6 +64,16 @@ class AdminController {
             next(err);
         }
     }
+    async deleteBlogPost(req, res, next) {
+        try {
+            const id = req.params.idPost;
+            const countPost = await blogService.deletePost(id);
+            return res.status(200).json();
+        }
+        catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new AdminController();
