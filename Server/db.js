@@ -11,6 +11,9 @@ module.exports = new Sequelize(
         define: {
             freezeTableName: true,
             timestamps: false
+        },
+        pool: {
+            acquire: 60000
         }
     }
 )
