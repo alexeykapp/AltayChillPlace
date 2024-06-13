@@ -37,7 +37,7 @@ class HouseService {
 
     async getHouseById(idHouse) {
         const houseFind = await house.findByPk(idHouse);
-        if (houseFind.length == 0) {
+        if (!houseFind) {
             throw new Error('There is no house with this id in the database');
         }
         const photosHouse = await photos_rooms.findAll({

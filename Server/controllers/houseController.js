@@ -41,13 +41,13 @@ class HouseController {
             const allPhotos = await houseService.getPhotoHouseById(idHouse);
             const compressedPhotosHouse = await Promise.all(allPhotos.photosHouse.map(photo =>
                 sharp(photo)
-                    .jpeg({ quality: 70 })
+                    .jpeg({ quality: 50 })
                     .toBuffer()
             ));
 
             const compressedPhotosRoom = await Promise.all(allPhotos.photosRoom.map(photo =>
                 sharp(photo)
-                    .jpeg({ quality: 70 })
+                    .jpeg({ quality: 50 })
                     .toBuffer()
             ));
             res.json({
